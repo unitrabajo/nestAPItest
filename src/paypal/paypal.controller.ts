@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { CreatePaypalDto } from './dto/create-paypal.dto';
 import { PaypalService } from './paypal.service';
 
@@ -11,5 +11,6 @@ export class PaypalController {
   payOrder( @Body() createPaypalDto: CreatePaypalDto ) {
     return this.paypalService.payOrder( createPaypalDto );
   }
+
 
 }

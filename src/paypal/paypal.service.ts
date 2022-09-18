@@ -1,6 +1,8 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { firstValueFrom, map } from 'rxjs';
+import { DataSource } from 'typeorm';
 import { CreatePaypalDto } from './dto/create-paypal.dto';
 import { PaypalOrderStatusResponse } from './interfaces/paypal.interface';
 
@@ -8,7 +10,11 @@ import { PaypalOrderStatusResponse } from './interfaces/paypal.interface';
 export class PaypalService {
 
 
-  constructor( private readonly httpService: HttpService ) {}
+  constructor( private readonly httpService: HttpService,
+               private readonly configService: ConfigService,
+               private readonly dataSource: DataSource ) {}
+
+
 
 
   async payOrder( createPaypalDto: CreatePaypalDto ) {
@@ -30,7 +36,6 @@ export class PaypalService {
     })
 
     
-
     // Validar que la orden exista en la base de datos
     // Validar que el monto pagado sea igual al monto total de la orden
 
@@ -42,10 +47,8 @@ export class PaypalService {
   
   generateAccessToken() {
 
-    const PAYPAL_CLIENT = 'ASVnmzHN5WWMdJ4iBvoJTbRpD2jiPw5mKXp50Z-yqR5lUIhXii2TvXX4QfwN6zgoBjsNtaHa6Lh2bnq2';
-    const PAYPAL_SECRET = 'EN8DplDbJSl5vxASRPWpj_PFjtSM2XOtwAb6I7l5xZk5NvEWqASpV9aHUa76Wsq4NFeXn2LG8yRg4EqN';
 
-    const base64Token = Buffer.from(`${ PAYPAL_CLIENT }:${ PAYPAL_SECRET }`, 'utf-8').toString('base64');
+    const base64Token = Buffer.from(`${ this.configService.get('PAYPAL_CLIENT') }:${ this.configService.get('PAYPAL_SECRET') }`, 'utf-8').toString('base64');
     const body = new URLSearchParams('grant_type=client_credentials');
 
 
