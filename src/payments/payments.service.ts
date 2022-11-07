@@ -31,12 +31,11 @@ export class PaymentsService {
     
     const { userId, saleId, transactionId, isSuccess } = createTransactionDto; 
 
-    // console.log( userId, saleId, transactionId, isSuccess ? 1 : 0, null, null)
-
-    // console.log( `call publish_tran( ${userId}, ${saleId}, ${transactionId}, ${isSuccess ? 1 : 0}, null, null );`)
     const queryRunner = this.dataSource.createQueryRunner();
     
     await queryRunner.connect();
+
+    // El segundo parametro es el id venta
 
     var result = await queryRunner.manager.query(
       `call publish_tran( ${userId}, ${saleId}, '${transactionId}', ${isSuccess ? 1 : 0}, null, null );`

@@ -4,7 +4,7 @@ import { DataSource } from 'typeorm';
 @Injectable()
 export class PackagesService {
 
-  constructor(private readonly dataSource: DataSource ){}
+  constructor( private readonly dataSource: DataSource ){}
  
   async findAll() {
 
@@ -12,7 +12,7 @@ export class PackagesService {
     
     await queryRunner.connect();
 
-    var result = await queryRunner.manager.query(
+    let result = await queryRunner.manager.query(
       "SELECT p.`name`, p.packageId, p.price,(IF(p.discount IS NULL,p.price,(p.price - p.discount))) as discount, CONCAT(p.time, ' ', s.`name`) as time FROM package as p INNER JOIN s_package as s ON p.timeid = s.timeid WHERE p.online = 1"
     );
 

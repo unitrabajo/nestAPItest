@@ -7,6 +7,7 @@ import { PaypalModule } from './paypal/paypal.module';
 import { MailModule } from './mail/mail.module';
 import { PaymentsModule } from './payments/payments.module';
 import { PackagesModule } from './packages/packages.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -30,6 +31,8 @@ import { PackagesModule } from './packages/packages.module';
     PaymentsModule,
 
     PackagesModule,
+
+    AuthModule,
 
   ],
   controllers: [AppController],

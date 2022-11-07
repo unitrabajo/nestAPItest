@@ -3,7 +3,7 @@
 
 
 
-import { IsBoolean, IsNumber, IsString } from "class-validator"
+import { IsBoolean, IsNumber, IsOptional, IsString } from "class-validator"
 
 export class CreateTransactionDto {
 
@@ -11,6 +11,7 @@ export class CreateTransactionDto {
     userId: number // ID el usuario
 
     @IsNumber()
+    @IsOptional()
     saleId: number // Id de la venta
 
     @IsString()
