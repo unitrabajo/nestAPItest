@@ -19,14 +19,16 @@ export class AuthService {
       await queryRunner.startTransaction();
   
       let result = await queryRunner.manager.query("select * from g_users where email = ?", [email])
-      console.log(result[0])
 
       if ( result[0] ) {
         // Editar al usuario
-        await queryRunner.manager.query("update g_users set name = ?, isGoogle = 1 where email = ?", [name, email])
+        await queryRunner.manager.query("update g_users set name = ?, isGoogle = 1, imagesperfil = ? where email = ?", [name, picture, email])
       } else {
         // Crear su usuario
+        await queryRunner.manager.query("insert into g_users (name, isGoogle, imagesperfil, email) values (?, 1, ?, ?)", [name, picture, email])
       }
+
+      const user = await queryRunner.manager.query("select * from g_users where email = ?", [email])
 
       await queryRunner.commitTransaction();
       await queryRunner.release();
@@ -37,10 +39,7 @@ export class AuthService {
 
       return {
         status: true,
-        message: 'Google',
-        name,
-        email,
-        picture,
+        folio: user[0]['userid']
       };
 
   } catch(e) {

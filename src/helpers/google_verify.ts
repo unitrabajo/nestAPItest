@@ -12,9 +12,7 @@ export const googleVerify = async ( token ) => {
   const payload = ticket.getPayload();
   const userid = payload['sub'];
 
-  console.log(payload)
   const { name, email, picture } = payload
-  console.log({ name, email, picture })
 
   return { name, email, picture }
 
