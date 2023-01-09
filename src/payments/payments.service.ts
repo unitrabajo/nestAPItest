@@ -11,6 +11,8 @@ export class PaymentsService {
 
     const { userId, packageId, amount, price, saleId } = createSaleDto;
 
+    console.log({ userId, packageId, amount, price, saleId })
+
     const queryRunner = this.dataSource.createQueryRunner();
     
     await queryRunner.connect();

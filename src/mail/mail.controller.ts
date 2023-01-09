@@ -11,7 +11,7 @@ export class MailController {
 
   @Get('send')
   async findAll() {
-    await this.mailService.sendUserConfirmation({ email: 'cc.clasificadoscontacto@gmail.com', name: 'Rodolfo' }, '1234567');
+    await this.mailService.sendUserConfirmation({ email: 'marianaolivas031096@gmail.com', name: 'Rodolfo' }, '1234567');
   }
 
 

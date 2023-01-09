@@ -8,6 +8,8 @@ import { MailModule } from './mail/mail.module';
 import { PaymentsModule } from './payments/payments.module';
 import { PackagesModule } from './packages/packages.module';
 import { AuthModule } from './auth/auth.module';
+import { JobsModule } from './jobs/jobs.module';
+import { JobMode } from './jobs/entities/job-mode.entity';
 
 @Module({
   imports: [
@@ -20,7 +22,8 @@ import { AuthModule } from './auth/auth.module';
       database: process.env.DB_NAME_DEV,
       username: process.env.DB_USERNAME_DEV,
       password: process.env.DB_PASSWORD_DEV,
-      // entities: [],
+      autoLoadEntities: true,
+      // entities: [ ],
       // synchronize: true,
     }),
 
@@ -33,6 +36,8 @@ import { AuthModule } from './auth/auth.module';
     PackagesModule,
 
     AuthModule,
+
+    JobsModule,
 
   ],
   controllers: [AppController],

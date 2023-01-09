@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class MailService {
+  
   constructor(private mailerService: MailerService) {}
 
   async sendUserConfirmation(user: User, token: string) {
