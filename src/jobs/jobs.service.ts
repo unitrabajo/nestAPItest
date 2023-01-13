@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { CreateJobDto } from './dto/create-job.dto';
@@ -25,11 +25,132 @@ export class JobsService {
     private readonly dataSource: DataSource,
   ){}
 
-  create(createJobDto: CreateJobDto) {
+  async create(createJobDto: CreateJobDto) {
 
+    const {
+      RDx_nombre,
+      RDx_descripcion = null,
+      SDx_destacado,
+      SDx_keywords = null,
+      SDx_expAnios,
+      SDx_edadMin,
+      SDx_edadMax,
+      SDx_estudios = null,
+      SDx_idioma = null,
+      SDx_nivel = null,
+      SDx_conocimiento = null,
+      SDx_dispViaje = null,
+      SDx_cambioDomicilio,
+      SDx_discapacidad,
+      SDx_ciudad = null,
+      SDx_pais,
+      SDx_estado,
+      RDx_categoria,
+      RDx_subCategoria,
+      RDx_tipo,
+      RDx_usuario,
+      SDx_beneficios = null,
+      SDx_contrato = null,
+      SDx_horario = null,
+      SDx_fechacontrato,
+      SDx_fechalimite,
+      SDx_vacantes,
+      SDx_modoid,
+      SDx_nomina,
+      SDx_urgente,
+      SDx_contratacionInmediato,
+      SDx_direccion = null,
+      SDx_sueldo,
+      SDx_idedita = null
+    } = createJobDto;
+
+    const queryRunner = this.dataSource.createQueryRunner();
     
+    await queryRunner.connect();
 
-    return 'This action adds a new job';
+    console.log(
+      `call publish_work(
+        ${RDx_nombre && "'" + RDx_nombre +"'"},
+        ${RDx_descripcion && "'" + RDx_descripcion +"'"},
+        ${SDx_destacado ?? 0},
+        ${SDx_keywords && "'" + SDx_keywords +"'"},
+        ${SDx_expAnios},
+        ${SDx_edadMin},
+        ${SDx_edadMax},
+        ${SDx_estudios && "'" + SDx_estudios +"'"},
+        ${SDx_idioma && "'" + SDx_idioma +"'"},
+        ${SDx_nivel},
+        ${SDx_conocimiento && "'" + SDx_conocimiento +"'"},
+        ${SDx_dispViaje ? 1 : 0},
+        ${SDx_cambioDomicilio ? 1 : 0},
+        ${SDx_discapacidad ? 1 : 0},
+        ${SDx_ciudad},
+        ${SDx_pais},
+        ${SDx_estado},
+        ${RDx_categoria},
+        ${RDx_subCategoria},
+        ${RDx_tipo},
+        ${RDx_usuario},
+        ${SDx_beneficios},
+        ${SDx_contrato},
+        ${SDx_horario},
+        ${SDx_fechacontrato && "'" + SDx_fechacontrato +"'"},
+        ${SDx_fechalimite && "'" + SDx_fechalimite +"'"},
+        ${SDx_vacantes},
+        ${SDx_modoid},
+        ${SDx_nomina},
+        ${SDx_urgente ? 1 : 0},
+        ${SDx_contratacionInmediato ? 1 : 0},
+        ${SDx_direccion},
+        ${SDx_sueldo},
+        ${SDx_idedita })`
+    )
+
+    let result = await queryRunner.manager.query(
+      `call publish_work(
+        ${RDx_nombre && "'" + RDx_nombre +"'"},
+        ${RDx_descripcion && "'" + RDx_descripcion +"'"},
+        ${SDx_destacado ?? 0},
+        ${SDx_keywords && "'" + SDx_keywords +"'"},
+        ${SDx_expAnios},
+        ${SDx_edadMin},
+        ${SDx_edadMax},
+        ${SDx_estudios && "'" + SDx_estudios +"'"},
+        ${SDx_idioma && "'" + SDx_idioma +"'"},
+        ${SDx_nivel},
+        ${SDx_conocimiento && "'" + SDx_conocimiento +"'"},
+        ${SDx_dispViaje ? 1 : 0},
+        ${SDx_cambioDomicilio ? 1 : 0},
+        ${SDx_discapacidad ? 1 : 0},
+        ${SDx_ciudad},
+        ${SDx_pais},
+        ${SDx_estado},
+        ${RDx_categoria},
+        ${RDx_subCategoria},
+        ${RDx_tipo},
+        ${RDx_usuario},
+        ${SDx_beneficios},
+        ${SDx_contrato},
+        ${SDx_horario},
+        ${SDx_fechacontrato && "'" + SDx_fechacontrato +"'"},
+        ${SDx_fechalimite && "'" + SDx_fechalimite +"'"},
+        ${SDx_vacantes},
+        ${SDx_modoid},
+        ${SDx_nomina},
+        ${SDx_urgente ? 1 : 0},
+        ${SDx_contratacionInmediato ? 1 : 0},
+        ${SDx_direccion},
+        ${SDx_sueldo},
+        ${SDx_idedita})`,
+    );
+
+    await queryRunner.release();
+
+        
+    console.log(result)
+
+    return result;
+
   }
 
 
@@ -51,6 +172,26 @@ export class JobsService {
   }
 
 
+  async findByFolioToEdit( id: string ) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    
+    await queryRunner.connect();
+    
+    const result = await queryRunner.manager.query(
+      `call search_work(null, null, null, null, null, null, null, ${id}, 3, null)`
+    );
+
+    if ( !result[0][0] ) {
+      return new NotFoundException({
+        message: `No existe un empleo con el ID ${id}`
+      })
+    }
+
+    await queryRunner.release();
+
+    return result[0][0];
+  }
+
 
   async findAllFilters(filtersJobDto: FiltersJobDto) {
 
@@ -70,8 +211,6 @@ export class JobsService {
     const queryRunner = this.dataSource.createQueryRunner();
     
     await queryRunner.connect();
-    
-    console.log(`call search_work( ${area ?? 0}, ${empleo ?? 0}, ${nomina ?? 0}, ${sueldo ?? 0}, ${idioma ?? 0}, ${keyword ?? 0}, ${modo ?? 0}, ${folio ?? 0}, ${tipo ?? 0}, 0 );`)
     
     var result = await queryRunner.manager.query(
       `call search_work( ${area ?? null}, ${empleo ?? null}, ${nomina ?? null}, ${sueldo ?? null}, ${idioma ?? null}, ${keyword ?? null}, ${modo ?? null}, ${folio ?? null}, ${tipo ?? null}, 0 );`
@@ -131,6 +270,8 @@ export class JobsService {
     return this.jobRequirementRepository.find();
   }
 
+  
+
 
   private handleDBExceptions( error: any ) {
     if ( error.code === '23505' )
@@ -139,6 +280,9 @@ export class JobsService {
     // console.log(error)
     throw new InternalServerErrorException('Unexpected error, check server logs');
   }
+
+
+
 
 
 }

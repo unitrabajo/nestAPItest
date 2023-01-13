@@ -1,12 +1,9 @@
 import { Controller, Get, Post, Body, UseGuards, Req, SetMetadata, Query } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { PaginationDto } from '../common/dto/pagination.dto';
 import { AuthService } from './auth.service';
-import { Auth, GetUser, RoleProtected } from './decorators';
-import { CreateUserDto, LoginUserDto } from './dto';
+import { GetUser } from './decorators';
+import { CreateUserDto, LoginUserDto, GoogleSinginDto, ResetPasswordDto, ChangePasswordDto } from './dto';
 import { User } from './entities/user.entity';
-import { UserRoleGuard } from './guards/user-role.guard';
-import { ValidRoles } from './interfaces';
 
 @Controller('auth')
 export class AuthController {
@@ -25,55 +22,39 @@ export class AuthController {
     return this.authService.login( loginUserDto );
   }
 
+  @Post('google')
+  googleSingIn( @Body() googleSinginDto: GoogleSinginDto ) {
+    const { googleToken } = googleSinginDto;
+    return this.authService.googleSignIn( googleToken );
+  }
+
 
   @Get('renew')
-  // Ruta privada
   @UseGuards( AuthGuard() )
   renew(
-    // @Req() request: Express.Request 
     @GetUser() user: User,
-    // @GetUser('email') userEmail: string
     ) {
     return this.authService.renewToken( user );
   }
 
 
 
-
-
-  @Get('private')
-  // Añadir algo a la metadata
-  // @SetMetadata('roles', ['admin', 'super-admin'])
-  // Cramos un decorador para añadir datos a la metadata
-  @RoleProtected( ValidRoles.admin )
-  // Ruta privada, nuestros guards personalizados no lleva ()
-  @UseGuards( AuthGuard(), UserRoleGuard )
-  private( @GetUser() user: User ) {
-    console.log(user)
+  @Post('reset/password')
+  resetPassword( @Body() resetPasswordDto: ResetPasswordDto ) {
+    return this.authService.resetPassword(resetPasswordDto);
   }
 
 
-
-  @Get('private2')
-  // @Auth( ValidRoles.sudo, ValidRoles.admin )
-  @Auth( ValidRoles.admin )
-  // @Auth( ) Sin protección
-  private2( @GetUser() user: User ) {
-    console.log(user)
+  @Post('change/password')
+  changePassword( @Body() changePasswordDto: ChangePasswordDto ) {
+    return this.authService.changePassword(changePasswordDto);
   }
 
-
-
-
-  @Get('users')
-  findAll( @Query() paginationDto: PaginationDto ) {
-    return this.authService.findAll( paginationDto );
-  }
 
 
   @Get('seed')
   seed() {
-    return this.authService.changePasswords();
+    return this.authService.changePasswordsNewEncript();
   }
 
 }

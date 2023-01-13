@@ -3,10 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs'
 import { User } from './entities/user.entity';
-import { LoginUserDto, CreateUserDto } from './dto';
+import { LoginUserDto, CreateUserDto, ChangePasswordDto } from './dto';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { JwtService } from '@nestjs/jwt';
-import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { googleVerify } from './helpers/google_verify';
+import { v4 as uuidv4 } from 'uuid';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -85,8 +87,41 @@ export class AuthService {
     return {
       status: true,
       user,
-      // accessToken: this.getJwtToken( {id: user.id} )
+      accessToken: this.getJwtToken( {id: user.userid} )
     };
+
+  }
+
+
+
+  async googleSignIn( googleToken: string ) {
+
+    try {
+
+      const { name, email, picture } = await googleVerify( googleToken )
+
+      let user = await this.userRepository.findOneBy({email});
+
+      if ( user ) {
+        user.name = name;
+        user.isGoogle = true;
+        user.imagesperfil = picture;
+        this.userRepository.save(user);
+      } else {
+        user = this.userRepository.create({name, email, imagesperfil: picture, isGoogle: true});
+        await this.userRepository.save( user );
+      }
+
+
+      return {
+        status: true,
+        user,
+        accessToken: this.getJwtToken( {id: user.userid } )
+      }
+
+    } catch(error) {
+      this.handleExceptions(error)
+    }
 
   }
 
@@ -99,37 +134,87 @@ export class AuthService {
 
 
 
+  async resetPassword( resetPasswordDto: ResetPasswordDto ) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    
+    await queryRunner.connect();
 
+    const { email } = resetPasswordDto;
 
-  private handleExceptions( error: any ) {
-    if ( error.code === '23505' ) {
-      throw new BadRequestException({ status:false, message: error.detail })
+    const userResult = await queryRunner.manager.query(
+      'SELECT * FROM g_users WHERE email = ?;',
+      [ email ]
+    )
+
+    if ( !userResult[0] ) {
+      return new NotFoundException('No existe un usuario con el email ' + email)
     }
 
-    this.logger.error(error)
-    throw new InternalServerErrorException(`Unexpected error, check server logs.`)
+    await queryRunner.manager.query(
+      'UPDATE g_passwordForget SET online = 0 WHERE userid = ?;',
+      [userResult[0].userid]
+    )
+
+    const token = uuidv4();
+
+    await queryRunner.manager.query(
+      "INSERT INTO g_passwordForget(url, userid, online) VALUES (?, ?, ?)",
+      [token, userResult[0].userid, 1] 
+    );
+    
+
+    await queryRunner.release();
+
+    return {
+      status: true,
+      token,
+    };
   }
 
 
-  async findAll( paginationDto: PaginationDto ) {
+  async changePassword(changePasswordDto: ChangePasswordDto) {
 
-    // const { limit = 20, offset = 1 } = paginationDto;
+    const { token, newPassword } = changePasswordDto;
 
-    // const [ results, totalResults ] = await Promise.all([
-    //   this.userRepository.find({
-    //     take: limit,
-    //     skip: ( page - 1 ) * limit,
-    //   }),
-    //   this.userRepository.count()
-    // ])
+    const queryRunner = this.dataSource.createQueryRunner();
+    
+    await queryRunner.connect();
 
-    // return { results, totalResults }
+
+    const result = await queryRunner.manager.query(
+      'SELECT * FROM g_passwordForget WHERE url = ?;',
+      [ token ]
+    )
+
+    if ( !result[0] ) {
+      return new BadRequestException({ message: 'Token inválido' })
+    }
+
+    const salt = bcrypt.genSaltSync();
+
+    await queryRunner.manager.query(
+      'UPDATE g_users SET pass = ? WHERE userid = ?;',
+      [ bcrypt.hashSync( newPassword, salt ), result[0].userid ]
+    )
+
+    await queryRunner.manager.query(
+      'UPDATE g_passwordForget SET online = 0 WHERE userid = ?;',
+      [ result[0].userid ]
+    )
+
+    await queryRunner.release();
+
+    return {
+      status: true,
+      message: 'Contraseña actualizada con éxito.',
+    };
 
   }
 
 
 
-  async changePasswords() {
+
+  async changePasswordsNewEncript() {
 
     const queryRunner = this.dataSource.createQueryRunner();
     
@@ -154,6 +239,16 @@ export class AuthService {
     }; 
 
     
+  }
+
+
+  private handleExceptions( error: any ) {
+    if ( error.code === '23505' ) {
+      throw new BadRequestException({ status:false, message: error.detail })
+    }
+
+    this.logger.error(error)
+    throw new InternalServerErrorException(`Unexpected error, check server logs.`)
   }
 
 }

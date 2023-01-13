@@ -27,6 +27,12 @@ export class User {
     @Column('text')
     pass: string
 
+    @Column('bool')
+    isGoogle: boolean
+
+    @Column('text')
+    imagesperfil: string
+
 
     // @Column('int', {
     //     select: false

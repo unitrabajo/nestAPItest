@@ -18,6 +18,12 @@ export class JobsController {
     return this.jobsService.findAll();
   }
 
+  @Get('folio/:id')
+  findByFolioToEdit( @Param('id') id: string ) {
+    return this.jobsService.findByFolioToEdit( id );
+  }
+
+
 
   @Get('filters')
   findAllFilters( @Query() filtersJobDto: FiltersJobDto ) {

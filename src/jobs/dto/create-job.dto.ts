@@ -1,11 +1,120 @@
-import { IsString } from "class-validator";
+import { IsBoolean, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreateJobDto {
 
     @IsString()
     RDx_nombre: string
+    
+    @IsString()
+    @IsOptional()
+    RDx_descripcion: string
 
+    @IsString()
+    @IsOptional()
+    SDx_destacado: string;
 
+    @IsString()
+    @IsOptional()
+    SDx_keywords: string;
+    
+    @IsNumber()
+    SDx_expAnios: number
+
+    @IsNumber()
+    SDx_edadMin: number
+
+    @IsNumber()
+    SDx_edadMax: number
+
+    @IsString()
+    @IsOptional()
+    SDx_estudios: string
+
+    @IsString()
+    @IsOptional()
+    SDx_idioma: string
+
+    @IsNumber()
+    SDx_nivel: number
+
+    @IsString()
+    @IsOptional()
+    SDx_conocimiento: string
+
+    @IsBoolean()
+    SDx_dispViaje: boolean
+
+    @IsBoolean()
+    SDx_cambioDomicilio: boolean
+
+    @IsBoolean()
+    SDx_discapacidad: boolean
+
+    @IsString()
+    @IsOptional()
+    SDx_ciudad: string
+
+    @IsNumber()
+    SDx_pais: number
+
+    @IsNumber()
+    SDx_estado: number
+
+    @IsNumber()
+    RDx_categoria: number
+
+    @IsNumber()
+    RDx_subCategoria: number
+
+    @IsNumber()
+    RDx_tipo: number
+
+    @IsNumber()
+    RDx_usuario: number
+
+    @IsString()
+    @IsOptional()
+    SDx_beneficios: string
+
+    @IsString()
+    @IsOptional()
+    SDx_contrato: string
+
+    @IsString()
+    @IsOptional()
+    SDx_horario: string
+
+    @IsString()
+    SDx_fechacontrato: string
+
+    @IsString()
+    SDx_fechalimite: string
+
+    @IsNumber()
+    SDx_vacantes: number
+
+    @IsNumber()
+    SDx_modoid: number
+
+    @IsNumber()
+    SDx_nomina: number
+
+    @IsBoolean()
+    SDx_urgente: boolean
+
+    @IsBoolean()
+    SDx_contratacionInmediato: number
+
+    @IsString()
+    @IsOptional()
+    SDx_direccion: string
+
+    @IsString()
+    SDx_sueldo: string
+
+    @IsNumber()
+    @IsOptional()
+    SDx_idedita: number // EL ID SI ES EDITAR
 
 }
     // publish_work 

@@ -15,9 +15,10 @@ export class MailController {
   }
 
 
-  @Get()
+  @Get('test')
   async test() {
-    return 'hola'
+    console.log('AQUI')
+    return this.mailService.sendEmail();
   }
   
 }

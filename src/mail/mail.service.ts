@@ -20,6 +20,20 @@ export class MailService {
       },
     });
   }
+
+  async sendEmail() {
+
+    await this.mailerService.sendMail({
+      to: 'marianaolivas031096@gmail.com',
+      // from: '"Support Team" <support@example.com>', // override default from
+      subject: 'Welcome to Nice App! Confirm your Email',
+      template: 'welcome', // `.hbs` extension is appended automatically
+      context: { // ✏️ filling curly brackets with content
+      },
+    });
+  }
+
+
 }
 
 // ./../user/user.entity
