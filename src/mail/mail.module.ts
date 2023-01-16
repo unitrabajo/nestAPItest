@@ -12,11 +12,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       imports: [ConfigModule],
       useFactory: async (config: ConfigService) => ({
         transport: {
-          host: config.get('MAIL_HOST'),
+          host: config.get('EMAIL_HOST'),
+          port: config.get('EMAIL_PORT'), // en gmail no pongo el port
           secure: false,
           auth: {
-            user: config.get('MAIL_USER'),
-            pass: config.get('MAIL_PASSWORD'),
+            user: config.get('EMAIL_USER'),
+            pass: config.get('EMAIL_PASS'),
           },
         },
         defaults: {
@@ -34,7 +35,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     }), ConfigModule.forRoot()
   ],
   providers: [MailService],
-  controllers: [MailController],
   exports: [MailService],
+  controllers: [MailController],
 })
 export class MailModule {}

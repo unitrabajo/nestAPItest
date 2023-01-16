@@ -9,6 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { googleVerify } from './helpers/google_verify';
 import { v4 as uuidv4 } from 'uuid';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class AuthService {
@@ -17,18 +18,26 @@ export class AuthService {
 
   constructor( @InjectRepository(User) private readonly userRepository: Repository<User>,
                private readonly jwtService: JwtService,
-               private readonly dataSource: DataSource ){}
+               private readonly dataSource: DataSource,
+               private readonly mailService: MailService ){}
 
   async register(createUserDto: CreateUserDto) {
     
     try {
 
-      const { password, ...userData } = createUserDto;
+      const { password, email, ...userData } = createUserDto;
+
+      const exist = await this.userRepository.findOne({ where: { email } });
+
+      if ( exist ) {
+        return new BadRequestException({message: 'Ya existe un usuario con ese correo electrónico.'})
+      }
  
       const salt = bcrypt.genSaltSync();
 
       const user = this.userRepository.create({
         ...userData,
+        email,
         pass: bcrypt.hashSync( password, salt )
       });
 
@@ -164,6 +173,8 @@ export class AuthService {
     
 
     await queryRunner.release();
+
+    await this.mailService.sendEmailToken(email, token)
 
     return {
       status: true,

@@ -8,6 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { PasswordForget } from './entities/passwordForget.entity';
+import { MailModule } from '../mail/mail.module';
 
 @Module({
   controllers: [
@@ -20,6 +21,8 @@ import { PasswordForget } from './entities/passwordForget.entity';
   imports: [
 
     ConfigModule,
+
+    MailModule,
 
     TypeOrmModule.forFeature([
       User,

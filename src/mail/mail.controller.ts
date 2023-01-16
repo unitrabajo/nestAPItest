@@ -9,16 +9,6 @@ export class MailController {
   }
 
 
-  @Get('send')
-  async findAll() {
-    await this.mailService.sendUserConfirmation({ email: 'marianaolivas031096@gmail.com', name: 'Rodolfo' }, '1234567');
-  }
 
-
-  @Get('test')
-  async test() {
-    console.log('AQUI')
-    return this.mailService.sendEmail();
-  }
   
 }

@@ -9,7 +9,6 @@ import { PaymentsModule } from './payments/payments.module';
 import { PackagesModule } from './packages/packages.module';
 import { AuthModule } from './auth/auth.module';
 import { JobsModule } from './jobs/jobs.module';
-import { JobMode } from './jobs/entities/job-mode.entity';
 
 @Module({
   imports: [

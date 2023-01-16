@@ -68,44 +68,7 @@ export class JobsService {
     
     await queryRunner.connect();
 
-    console.log(
-      `call publish_work(
-        ${RDx_nombre && "'" + RDx_nombre +"'"},
-        ${RDx_descripcion && "'" + RDx_descripcion +"'"},
-        ${SDx_destacado ?? 0},
-        ${SDx_keywords && "'" + SDx_keywords +"'"},
-        ${SDx_expAnios},
-        ${SDx_edadMin},
-        ${SDx_edadMax},
-        ${SDx_estudios && "'" + SDx_estudios +"'"},
-        ${SDx_idioma && "'" + SDx_idioma +"'"},
-        ${SDx_nivel},
-        ${SDx_conocimiento && "'" + SDx_conocimiento +"'"},
-        ${SDx_dispViaje ? 1 : 0},
-        ${SDx_cambioDomicilio ? 1 : 0},
-        ${SDx_discapacidad ? 1 : 0},
-        ${SDx_ciudad},
-        ${SDx_pais},
-        ${SDx_estado},
-        ${RDx_categoria},
-        ${RDx_subCategoria},
-        ${RDx_tipo},
-        ${RDx_usuario},
-        ${SDx_beneficios},
-        ${SDx_contrato},
-        ${SDx_horario},
-        ${SDx_fechacontrato && "'" + SDx_fechacontrato +"'"},
-        ${SDx_fechalimite && "'" + SDx_fechalimite +"'"},
-        ${SDx_vacantes},
-        ${SDx_modoid},
-        ${SDx_nomina},
-        ${SDx_urgente ? 1 : 0},
-        ${SDx_contratacionInmediato ? 1 : 0},
-        ${SDx_direccion},
-        ${SDx_sueldo},
-        ${SDx_idedita })`
-    )
-
+  
     let result = await queryRunner.manager.query(
       `call publish_work(
         ${RDx_nombre && "'" + RDx_nombre +"'"},
@@ -196,15 +159,15 @@ export class JobsService {
   async findAllFilters(filtersJobDto: FiltersJobDto) {
 
     const {
-      area,
-      empleo,
-      nomina,
-      sueldo,
-      idioma,
-      keyword,
-      modo,
-      folio,
-      tipo,
+      area = null,
+      empleo = null,
+      nomina = null,
+      sueldo = null,
+      idioma = null,
+      keyword = null,
+      modo = null,
+      folio = null,
+      tipo = null,
     } = filtersJobDto;
 
 
@@ -212,8 +175,9 @@ export class JobsService {
     
     await queryRunner.connect();
     
+    console.log(`call search_work( ${area}, ${empleo}, ${nomina}, ${sueldo}, ${idioma}, ${keyword}, ${modo}, ${folio}, ${tipo}, 0 );`)
     var result = await queryRunner.manager.query(
-      `call search_work( ${area ?? null}, ${empleo ?? null}, ${nomina ?? null}, ${sueldo ?? null}, ${idioma ?? null}, ${keyword ?? null}, ${modo ?? null}, ${folio ?? null}, ${tipo ?? null}, 0 );`
+      `call search_work( ${area}, ${empleo}, ${nomina}, ${sueldo}, ${idioma}, ${keyword}, ${modo}, ${folio}, ${tipo}, 0 );`
     );
 
     await queryRunner.release();
