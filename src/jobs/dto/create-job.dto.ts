@@ -2,119 +2,108 @@ import { IsBoolean, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreateJobDto {
 
-    @IsString()
+    @IsOptional()
     RDx_nombre: string
     
-    @IsString()
     @IsOptional()
     RDx_descripcion: string
 
-    @IsString()
     @IsOptional()
     SDx_destacado: string;
 
-    @IsString()
     @IsOptional()
     SDx_keywords: string;
     
-    @IsNumber()
+    @IsOptional()
     SDx_expAnios: number
 
-    @IsNumber()
+    @IsOptional()
     SDx_edadMin: number
 
-    @IsNumber()
+    @IsOptional()
     SDx_edadMax: number
 
-    @IsString()
     @IsOptional()
     SDx_estudios: string
 
-    @IsString()
     @IsOptional()
     SDx_idioma: string
 
-    @IsNumber()
+    @IsOptional()
     SDx_nivel: number
 
-    @IsString()
     @IsOptional()
     SDx_conocimiento: string
 
-    @IsBoolean()
+    @IsOptional()
     SDx_dispViaje: boolean
 
-    @IsBoolean()
+    @IsOptional()
     SDx_cambioDomicilio: boolean
 
-    @IsBoolean()
+    @IsOptional()
     SDx_discapacidad: boolean
 
-    @IsString()
     @IsOptional()
     SDx_ciudad: string
 
-    @IsNumber()
+    @IsOptional()
     SDx_pais: number
 
-    @IsNumber()
+    @IsOptional()
     SDx_estado: number
 
-    @IsNumber()
+    @IsOptional()
     RDx_categoria: number
 
-    @IsNumber()
+    @IsOptional()
     RDx_subCategoria: number
 
-    @IsNumber()
+    @IsOptional()
     RDx_tipo: number
 
-    @IsNumber()
+    @IsOptional()
     RDx_usuario: number
 
-    @IsString()
+    
     @IsOptional()
     SDx_beneficios: string
 
-    @IsString()
     @IsOptional()
     SDx_contrato: string
 
-    @IsString()
     @IsOptional()
     SDx_horario: string
-
-    @IsString()
+    @IsOptional()
     SDx_fechacontrato: string
-
-    @IsString()
+    @IsOptional()
     SDx_fechalimite: string
-
-    @IsNumber()
+    @IsOptional()
     SDx_vacantes: number
-
-    @IsNumber()
+    @IsOptional()
     SDx_modoid: number
-
-    @IsNumber()
+    @IsOptional()
     SDx_nomina: number
 
-    @IsBoolean()
+    @IsOptional()
     SDx_urgente: boolean
 
-    @IsBoolean()
+    @IsOptional()
     SDx_contratacionInmediato: number
 
-    @IsString()
+    
     @IsOptional()
     SDx_direccion: string
 
-    @IsString()
+    @IsOptional()
     SDx_sueldo: string
 
-    @IsNumber()
+    
     @IsOptional()
     SDx_idedita: number // EL ID SI ES EDITAR
+
+    @IsOptional()
+    SDx_municipio:number
 
 }
     // publish_work 

@@ -64,6 +64,7 @@ export class JobsService {
       SDx_idedita = null
     } = createJobDto;
 
+
     const queryRunner = this.dataSource.createQueryRunner();
     
     await queryRunner.connect();
@@ -71,48 +72,50 @@ export class JobsService {
   
     let result = await queryRunner.manager.query(
       `call publish_work(
-        ${RDx_nombre && "'" + RDx_nombre +"'"},
-        ${RDx_descripcion && "'" + RDx_descripcion +"'"},
+        ${RDx_nombre ? "'" + RDx_nombre +"'" : null},
+        ${RDx_descripcion ? "'" + RDx_descripcion +"'" : null},
         ${SDx_destacado ?? 0},
-        ${SDx_keywords && "'" + SDx_keywords +"'"},
-        ${SDx_expAnios},
-        ${SDx_edadMin},
-        ${SDx_edadMax},
-        ${SDx_estudios && "'" + SDx_estudios +"'"},
-        ${SDx_idioma && "'" + SDx_idioma +"'"},
-        ${SDx_nivel},
-        ${SDx_conocimiento && "'" + SDx_conocimiento +"'"},
+        ${SDx_keywords ? "'" + SDx_keywords +"'" : null},
+        ${SDx_expAnios ? "'" + SDx_expAnios +"'" : null},
+        ${SDx_edadMin  ? "'" + SDx_edadMin +"'" : null},
+        ${SDx_edadMax  ? "'" + SDx_edadMax +"'" : null},
+        ${SDx_estudios ? "'" + SDx_estudios +"'" : null},
+        ${SDx_idioma ? "'" + SDx_idioma +"'" : null},
+        ${SDx_nivel ? "'" + SDx_nivel +"'" : null},
+        ${SDx_conocimiento ? "'" + SDx_conocimiento +"'" : null},
         ${SDx_dispViaje ? 1 : 0},
         ${SDx_cambioDomicilio ? 1 : 0},
         ${SDx_discapacidad ? 1 : 0},
-        ${SDx_ciudad},
-        ${SDx_pais},
-        ${SDx_estado},
-        ${RDx_categoria},
-        ${RDx_subCategoria},
-        ${RDx_tipo},
-        ${RDx_usuario},
-        ${SDx_beneficios},
-        ${SDx_contrato},
-        ${SDx_horario},
-        ${SDx_fechacontrato && "'" + SDx_fechacontrato +"'"},
-        ${SDx_fechalimite && "'" + SDx_fechalimite +"'"},
-        ${SDx_vacantes},
-        ${SDx_modoid},
-        ${SDx_nomina},
+        ${SDx_ciudad ? "'" + SDx_ciudad +"'" : null},
+        ${SDx_pais ? "'" + SDx_pais +"'" : null},
+        ${SDx_estado ? "'" + SDx_estado +"'"  : null},
+        ${RDx_categoria ? "'" + RDx_categoria +"'" : null},
+        ${RDx_subCategoria ? "'" + RDx_subCategoria +"'" : null},
+        ${RDx_tipo ? "'" + RDx_tipo +"'" : null},
+        ${RDx_usuario ? "'" + RDx_usuario +"'" : null},
+        ${SDx_beneficios ? "'" + SDx_beneficios +"'" : null},
+        ${SDx_contrato ? "'" + SDx_contrato +"'" : null},
+        ${SDx_horario ? "'" + SDx_horario +"'" : null},
+        ${SDx_fechacontrato ? "'" + SDx_fechacontrato +"'" : null},
+        ${SDx_fechalimite ? "'" + SDx_fechalimite +"'" : null},
+        ${SDx_vacantes ? "'" + SDx_vacantes +"'" : null},
+        ${SDx_modoid ? "'" + SDx_modoid +"'" : null},
+        ${SDx_nomina ? "'" + SDx_nomina +"'" : null},
         ${SDx_urgente ? 1 : 0},
-        ${SDx_contratacionInmediato ? 1 : 0},
-        ${SDx_direccion},
-        ${SDx_sueldo},
-        ${SDx_idedita})`,
+        ${SDx_contratacionInmediato ? 1 : 0 },
+        ${SDx_direccion ? "'" + SDx_direccion +"'" : null},
+        ${SDx_sueldo ? "'" + SDx_sueldo.replace(',', '') +"'" : null},
+        ${SDx_idedita ? "'" + SDx_idedita +"'" : null})`,
     );
 
+    
+
     await queryRunner.release();
-
         
-    console.log(result)
 
-    return result;
+    return {
+      status: result[0][0].valido == 1
+    };
 
   }
 
@@ -131,6 +134,28 @@ export class JobsService {
     await queryRunner.release();
 
     return result;
+
+  }
+
+  async findAllByUserId( userId: string ) {
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    
+    await queryRunner.connect();
+    
+    const result = await queryRunner.manager.query(
+      `call search_work(null, null, null, null, null, null, null, ${userId}, 2, null)`
+    );
+
+    // if ( !result[0][0] ) {
+    //   return new NotFoundException({
+    //     message: `No existe un empleo con el ID ${id}`
+    //   })
+    // }
+
+    await queryRunner.release();
+
+    return result[0];
 
   }
 
@@ -175,7 +200,6 @@ export class JobsService {
     
     await queryRunner.connect();
     
-    console.log(`call search_work( ${area}, ${empleo}, ${nomina}, ${sueldo}, ${idioma}, ${keyword}, ${modo}, ${folio}, ${tipo}, 0 );`)
     var result = await queryRunner.manager.query(
       `call search_work( ${area}, ${empleo}, ${nomina}, ${sueldo}, ${idioma}, ${keyword}, ${modo}, ${folio}, ${tipo}, 0 );`
     );

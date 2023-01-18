@@ -18,6 +18,13 @@ export class JobsController {
     return this.jobsService.findAll();
   }
 
+  @Get('all/:userId')
+  findAllByUserId(@Param('userId') userId: string) {
+    return this.jobsService.findAllByUserId(userId);
+  }
+
+
+
   @Get('folio/:id')
   findByFolioToEdit( @Param('id') id: string ) {
     return this.jobsService.findByFolioToEdit( id );
