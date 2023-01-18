@@ -90,7 +90,6 @@ export class AuthService {
 
   async renewToken( user: User ) {
 
-    console.log(user)
     if ( !user ) throw new UnauthorizedException(`Unauthorized`)
 
     return {
@@ -261,5 +260,35 @@ export class AuthService {
     this.logger.error(error)
     throw new InternalServerErrorException(`Unexpected error, check server logs.`)
   }
+
+
+  // ADMIN
+
+  async loginAdmin( loginUserDto: LoginUserDto ) {
+
+
+    const { password, email } = loginUserDto;
+
+    const user = await this.userRepository.findOne({ 
+      where: { email, usertype: 1 },
+      select: { email: true, pass: true, userid: true }
+    });
+
+    if ( !user ) {
+      throw new UnauthorizedException(`Credentials are not valid.`)
+    }
+
+    if ( !bcrypt.compareSync(password, user.pass) ) {
+      throw new UnauthorizedException(`Credentials are not valid.`)
+    }
+
+    return {
+      status: true,
+      user,
+      accessToken: this.getJwtToken( {id: user.userid} )
+    };
+
+  }
+
 
 }

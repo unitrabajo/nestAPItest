@@ -22,6 +22,13 @@ export class AuthController {
     return this.authService.login( loginUserDto );
   }
 
+  @Post('login/admin')
+  loginAdmin(@Body() loginUserDto: LoginUserDto ) {
+    return this.authService.loginAdmin( loginUserDto );
+  }
+
+
+
   @Post('google')
   googleSingIn( @Body() googleSinginDto: GoogleSinginDto ) {
     const { googleToken } = googleSinginDto;

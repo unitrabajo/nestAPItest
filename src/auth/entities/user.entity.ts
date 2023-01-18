@@ -33,6 +33,9 @@ export class User {
     @Column('text')
     imagesperfil: string
 
+    @Column('bool')
+    usertype: number
+
 
     // @Column('int', {
     //     select: false
