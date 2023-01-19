@@ -38,17 +38,21 @@ export class AuthService {
       const user = this.userRepository.create({
         ...userData,
         email,
-        pass: bcrypt.hashSync( password, salt )
+        pass: bcrypt.hashSync( password, salt ),
+        online: 1
       });
 
       await this.userRepository.save( user );
 
-      // No retornar la contraseña
-      delete user.pass;
+
+      const userdb = await this.userRepository.findOne({
+        where: { userid: user.userid },
+        select: { email: true, userid: true, usertype: true }
+      })
 
       return {
         status: true,
-        user,
+        user: userdb,
         accessToken: this.getJwtToken( {id: user.userid} )
       };
 
@@ -66,8 +70,8 @@ export class AuthService {
     const { password, email } = loginUserDto;
 
     const user = await this.userRepository.findOne({ 
-      where: { email },
-      select: { email: true, pass: true, userid: true }
+      where: { email, online: 1 },
+      select: { email: true, pass: true, userid: true, usertype: true }
     });
 
     if ( !user ) {
@@ -77,6 +81,9 @@ export class AuthService {
     if ( !bcrypt.compareSync(password, user.pass) ) {
       throw new UnauthorizedException(`Credentials are not valid.`)
     }
+
+
+    delete user.pass;
 
     return {
       status: true,
@@ -92,9 +99,11 @@ export class AuthService {
 
     if ( !user ) throw new UnauthorizedException(`Unauthorized`)
 
+    const { userid, email, usertype } = user;
+
     return {
       status: true,
-      user,
+      user: { userid, email, usertype },
       accessToken: this.getJwtToken( {id: user.userid} )
     };
 
@@ -116,14 +125,26 @@ export class AuthService {
         user.imagesperfil = picture;
         this.userRepository.save(user);
       } else {
-        user = this.userRepository.create({name, email, imagesperfil: picture, isGoogle: true});
+        user = this.userRepository.create({
+          name, 
+          email, 
+          imagesperfil: picture, 
+          isGoogle: true,
+          online: 1
+        });
         await this.userRepository.save( user );
       }
 
 
+      const userdb = await this.userRepository.findOne({
+        where: { userid: user.userid },
+        select: { email: true, userid: true, usertype: true }
+      })
+
+
       return {
         status: true,
-        user,
+        user: userdb,
         accessToken: this.getJwtToken( {id: user.userid } )
       }
 
@@ -270,8 +291,8 @@ export class AuthService {
     const { password, email } = loginUserDto;
 
     const user = await this.userRepository.findOne({ 
-      where: { email, usertype: 1 },
-      select: { email: true, pass: true, userid: true }
+      where: { email, usertype: 1,  online: 1 },
+      select: { email: true, pass: true, userid: true, usertype: true }
     });
 
     if ( !user ) {
@@ -281,6 +302,8 @@ export class AuthService {
     if ( !bcrypt.compareSync(password, user.pass) ) {
       throw new UnauthorizedException(`Credentials are not valid.`)
     }
+
+    delete user.pass;
 
     return {
       status: true,

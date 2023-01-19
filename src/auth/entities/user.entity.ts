@@ -33,8 +33,13 @@ export class User {
     @Column('text')
     imagesperfil: string
 
-    @Column('bool')
+    @Column('int')
     usertype: number
+
+    @Column('bool')
+    online: number
+
+   
 
 
     // @Column('int', {
