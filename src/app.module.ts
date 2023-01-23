@@ -16,11 +16,11 @@ import { JobsModule } from './jobs/jobs.module';
 
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: process.env.DB_HOST_DEV,
-      port: +process.env.DB_PORT_DEV,
-      database: process.env.DB_NAME_DEV,
-      username: process.env.DB_USERNAME_DEV,
-      password: process.env.DB_PASSWORD_DEV,
+      host: process.env.DB_HOST,
+      port: +process.env.DB_PORT,
+      database: process.env.DB_NAME,
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
       autoLoadEntities: true,
       // entities: [ ],
       // synchronize: true,

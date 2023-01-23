@@ -252,16 +252,19 @@ export class AuthService {
     await queryRunner.connect();
 
     const salt = bcrypt.genSaltSync();
+  
 
     const users = await queryRunner.manager.query(
-      "SELECT userid, secret, pass FROM g_users", 
+      "SELECT userid, secret, pass FROM g_users where userid >= 6000 ", 
     );
 
     users.forEach( user => {
       if ( !user.secret ) return;
+      console.log(user)
       queryRunner.manager.query( 'UPDATE g_users SET pass = ? WHERE userid = ?', [bcrypt.hashSync(user.secret, salt ), user.userid] )
     });
 
+    console.log('termino')
     await queryRunner.release();
 
     return {
