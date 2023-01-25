@@ -214,20 +214,38 @@ export class JobsService {
 
 
   async findOne(id: number) {
-
+    console.log(id)
     try {
-      let job = await this.jobRepository.findOneBy({ workid: id });
+      // let job = await this.jobRepository.findOne({ where: { productid: id}});
 
-      if ( !job ) {
+      // if ( !job ) {
+      //   return {
+      //     status: false,
+      //     message: `No existe un empleos con el ID "${id}"`
+      //   }
+      // }
+
+      const queryRunner = this.dataSource.createQueryRunner();
+    
+      await queryRunner.connect();
+      
+      var result = await queryRunner.manager.query(
+        `call search_work(null, null, null, null, null, null, null, ${id}, 3, null)`
+      );
+  
+      await queryRunner.release();
+
+      if ( !result[0][0]){
         return {
           status: false,
           message: `No existe un empleos con el ID "${id}"`
         }
       }
+  
 
       return {
         status: true,
-        job
+        job: result[0][0]
       }
 
     } catch (error) {

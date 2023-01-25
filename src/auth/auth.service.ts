@@ -99,6 +99,9 @@ export class AuthService {
 
     if ( !user ) throw new UnauthorizedException(`Unauthorized`)
 
+
+    console.log(user)
+
     const { userid, email, usertype } = user;
 
     return {
