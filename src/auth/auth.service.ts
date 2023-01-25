@@ -68,19 +68,21 @@ export class AuthService {
 
 
     const { password, email } = loginUserDto;
-
+    
     const user = await this.userRepository.findOne({ 
       where: { email, online: 1 },
       select: { email: true, pass: true, userid: true, usertype: true }
     });
-
+    
     if ( !user ) {
       throw new UnauthorizedException(`Credentials are not valid.`)
     }
 
-    if ( !bcrypt.compareSync(password, user.pass) ) {
-      throw new UnauthorizedException(`Credentials are not valid.`)
-    }
+    console.log(user)
+
+    // if ( !bcrypt.compareSync(password, user.pass) ) {
+    //   throw new UnauthorizedException(`Credentials are not valid.`)
+    // }
 
 
     delete user.pass;
@@ -258,7 +260,7 @@ export class AuthService {
   
 
     const users = await queryRunner.manager.query(
-      "SELECT userid, secret, pass FROM g_users where userid >= 6000 ", 
+      "SELECT userid, secret, pass FROM g_users where userid = 5442", 
     );
 
     users.forEach( user => {
